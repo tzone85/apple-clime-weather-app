@@ -86,6 +86,12 @@ class WeatherViewController: UIViewController, CLLocationManagerDelegate {
             //if true thus error and location manager must stop updating the locations
             locationManager.stopUpdatingLocation()
             print("longitude = \(location.coordinate.longitude)", "latitude = \(location.coordinate.latitude)")
+            
+            let latitude = String(location.coordinate.latitude)
+            let longitude = String(location.coordinate.longitude)
+            
+            //making use of a Dictionery for the first time
+            let params : [String : String] = ["lat" : (latitude), "lon" : longitude, "appid" : APP_ID]
         }
         
         
