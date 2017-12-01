@@ -8,6 +8,8 @@
 
 import UIKit
 import CoreLocation
+import Alamofire
+import SwiftyJSON
 
 class WeatherViewController: UIViewController, CLLocationManagerDelegate {
     
@@ -46,6 +48,28 @@ class WeatherViewController: UIViewController, CLLocationManagerDelegate {
     
     //Write the getWeatherData method here:
     
+    func getWeatherData(url: String, parameters: [String : String]){
+        
+        //getting data from the api, and reacting accordingly depending on if the response is successful or not
+        //this takes place asynchronously in the background of the screen. Nothing gets held up on the frontend
+        
+        Alamofire.request(url, method: .get, parameters: parameters).responseJSON{
+            response in
+            if response.result.isSuccess{
+                print("Success! Got teh weather data")
+                
+                let weatherJSON : JSON = JSON(response.result.value!)
+                
+                self.updateUIWithWeatherData(json: weatherJSON)
+                
+            }else{
+                print("Error \(String(describing: response.result.error))")
+                self.cityLabel.text = "Connection Issues"
+            }
+        }
+        
+    }
+    
 
     
     
@@ -68,7 +92,11 @@ class WeatherViewController: UIViewController, CLLocationManagerDelegate {
     
     //Write the updateUIWithWeatherData method here:
     
-    
+    func updateUIWithWeatherData(json : JSON){
+        
+        //grabbing this data from the json raw file data, calling it buy making use of the SwiftyJSON library from our pods
+        let tempResults = json["msin"]["temp"]
+    }
     
     
     
@@ -85,6 +113,10 @@ class WeatherViewController: UIViewController, CLLocationManagerDelegate {
             
             //if true thus error and location manager must stop updating the locations
             locationManager.stopUpdatingLocation()
+            
+            //to prevent the json file from calling itself multiple times
+            locationManager.delegate = nil
+            
             print("longitude = \(location.coordinate.longitude)", "latitude = \(location.coordinate.latitude)")
             
             let latitude = String(location.coordinate.latitude)
@@ -92,6 +124,8 @@ class WeatherViewController: UIViewController, CLLocationManagerDelegate {
             
             //making use of a Dictionery for the first time
             let params : [String : String] = ["lat" : (latitude), "lon" : longitude, "appid" : APP_ID]
+            
+            getWeatherData(url: WEATHER_URL, parameters: params)
         }
         
         
