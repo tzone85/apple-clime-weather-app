@@ -21,6 +21,7 @@ class WeatherViewController: UIViewController, CLLocationManagerDelegate {
 
     //TODO: Declare instance variables here
     let locationManager = CLLocationManager()
+    let weatherDataModel = WeatherDataModel()
 
     
     //Pre-linked IBOutlets
@@ -56,11 +57,12 @@ class WeatherViewController: UIViewController, CLLocationManagerDelegate {
         Alamofire.request(url, method: .get, parameters: parameters).responseJSON{
             response in
             if response.result.isSuccess{
-                print("Success! Got teh weather data")
+                print("Success! Got the weather data")
                 
+                //force unwrapping the value for we've already made sure that it is not empty.
                 let weatherJSON : JSON = JSON(response.result.value!)
                 
-                self.updateUIWithWeatherData(json: weatherJSON)
+                self.updateWeatherData(json: weatherJSON)
                 
             }else{
                 print("Error \(String(describing: response.result.error))")
@@ -70,11 +72,6 @@ class WeatherViewController: UIViewController, CLLocationManagerDelegate {
         
     }
     
-
-    
-    
-    
-    
     
     //MARK: - JSON Parsing
     /***************************************************************/
@@ -82,7 +79,14 @@ class WeatherViewController: UIViewController, CLLocationManagerDelegate {
     
     //Write the updateWeatherData method here:
     
-
+    func updateWeatherData(json: JSON){
+        //grabbing this data from the json raw file data, calling it buy making use of the SwiftyJSON library from our pods
+        let tempResults = json["msin"]["temp"].double
+        weatherDataModel.temperature = Int(tempResults! - 273.15)
+        weatherDataModel.city = json["name"].stringValue
+        weatherDataModel.condition = json["weather"][0]["id"].intValue
+        weatherDataModel.weatherIconName = weatherDataModel.updateWeatherIcon(condition: weatherDataModel.condition)
+    }
     
     
     
@@ -94,8 +98,7 @@ class WeatherViewController: UIViewController, CLLocationManagerDelegate {
     
     func updateUIWithWeatherData(json : JSON){
         
-        //grabbing this data from the json raw file data, calling it buy making use of the SwiftyJSON library from our pods
-        let tempResults = json["msin"]["temp"]
+        
     }
     
     
@@ -109,12 +112,14 @@ class WeatherViewController: UIViewController, CLLocationManagerDelegate {
     func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
         //getting the last and most accurate value from within the array of locations
         let location = locations[locations.count - 1]
+        
+        //if the value we get is less than zero, then that's an invalid result
         if location.horizontalAccuracy > 0{
             
             //if true thus error and location manager must stop updating the locations
             locationManager.stopUpdatingLocation()
             
-            //to prevent the json file from calling itself multiple times
+            //to prevent the json file from calling itself multiple times. So this is sort of like a centinal
             locationManager.delegate = nil
             
             print("longitude = \(location.coordinate.longitude)", "latitude = \(location.coordinate.latitude)")
