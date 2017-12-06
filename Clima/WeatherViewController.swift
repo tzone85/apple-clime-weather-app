@@ -35,7 +35,7 @@ class WeatherViewController: UIViewController, CLLocationManagerDelegate {
         
         //TODO:Set up the location manager here.
         locationManager.delegate = self
-        locationManager.desiredAccuracy = kCLLocationAccuracyHundredMeters
+        locationManager.desiredAccuracy = kCLLocationAccuracyHundredMeters  //the more accurate, the longer it's going to take and the more batt you'll consume
         locationManager.requestWhenInUseAuthorization()
         locationManager.startUpdatingLocation()     //read up on this Assynchronous method. works on the background
         
