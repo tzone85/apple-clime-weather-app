@@ -61,7 +61,7 @@ class WeatherViewController: UIViewController, CLLocationManagerDelegate {
                 
                 //force unwrapping the value for we've already made sure that it is not empty.
                 let weatherJSON : JSON = JSON(response.result.value!)
-                
+                print(weatherJSON)
                 self.updateWeatherData(json: weatherJSON)
                 
             }else{
@@ -81,11 +81,14 @@ class WeatherViewController: UIViewController, CLLocationManagerDelegate {
     
     func updateWeatherData(json: JSON){
         //grabbing this data from the json raw file data, calling it buy making use of the SwiftyJSON library from our pods
-        let tempResults = json["msin"]["temp"].double
-        weatherDataModel.temperature = Int(tempResults! - 273.15)
-        weatherDataModel.city = json["name"].stringValue
-        weatherDataModel.condition = json["weather"][0]["id"].intValue
-        weatherDataModel.weatherIconName = weatherDataModel.updateWeatherIcon(condition: weatherDataModel.condition)
+        if let tempResults = json["msin"]["temp"].double{
+            weatherDataModel.temperature = Int(tempResults - 273.15)
+            weatherDataModel.city = json["name"].stringValue
+            weatherDataModel.condition = json["weather"][0]["id"].intValue
+            weatherDataModel.weatherIconName = weatherDataModel.updateWeatherIcon(condition: weatherDataModel.condition)
+        }else{
+            cityLabel.text = "Weather Unavailable"
+        }
     }
     
     
