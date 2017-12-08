@@ -81,11 +81,14 @@ class WeatherViewController: UIViewController, CLLocationManagerDelegate {
     
     func updateWeatherData(json: JSON){
         //grabbing this data from the json raw file data, calling it buy making use of the SwiftyJSON library from our pods
-        if let tempResults = json["msin"]["temp"].double{
+        if let tempResults = json["main"]["temp"].double{
             weatherDataModel.temperature = Int(tempResults - 273.15)
             weatherDataModel.city = json["name"].stringValue
             weatherDataModel.condition = json["weather"][0]["id"].intValue
             weatherDataModel.weatherIconName = weatherDataModel.updateWeatherIcon(condition: weatherDataModel.condition)
+            
+            //call updateUI method after the weather data has been loaded
+            updateUIWithWeatherData()
         }else{
             cityLabel.text = "Weather Unavailable"
         }
@@ -99,9 +102,11 @@ class WeatherViewController: UIViewController, CLLocationManagerDelegate {
     
     //Write the updateUIWithWeatherData method here:
     
-    func updateUIWithWeatherData(json : JSON){
+    func updateUIWithWeatherData(){
         
-        
+        cityLabel.text = weatherDataModel.city
+        temperatureLabel.text = String(weatherDataModel.temperature)
+        weatherIcon.image = UIImage(named: weatherDataModel.weatherIconName)
     }
     
     
