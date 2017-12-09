@@ -15,20 +15,19 @@ class WeatherViewController: UIViewController, CLLocationManagerDelegate, Change
     
     //Constants
     let WEATHER_URL = "http://api.openweathermap.org/data/2.5/weather"
-    //let APP_ID = "e72ca729af228beabd5d20e3b7749713"
     let APP_ID = "1ecc5c42d35d24d19ead5f81abacb492"
     
-
+    
     //TODO: Declare instance variables here
     let locationManager = CLLocationManager()
     let weatherDataModel = WeatherDataModel()
-
+    
     
     //Pre-linked IBOutlets
     @IBOutlet weak var weatherIcon: UIImageView!
     @IBOutlet weak var cityLabel: UILabel!
     @IBOutlet weak var temperatureLabel: UILabel!
-
+    
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -75,7 +74,7 @@ class WeatherViewController: UIViewController, CLLocationManagerDelegate, Change
     
     //MARK: - JSON Parsing
     /***************************************************************/
-   
+    
     
     //Write the updateWeatherData method here:
     
@@ -105,7 +104,7 @@ class WeatherViewController: UIViewController, CLLocationManagerDelegate, Change
     func updateUIWithWeatherData(){
         
         cityLabel.text = weatherDataModel.city
-        temperatureLabel.text = String(weatherDataModel.temperature)
+        temperatureLabel.text = "\(weatherDataModel.temperature)°"
         weatherIcon.image = UIImage(named: weatherDataModel.weatherIconName)
     }
     
@@ -152,18 +151,17 @@ class WeatherViewController: UIViewController, CLLocationManagerDelegate, Change
         cityLabel.text = "Locatio unavailable"
     }
     
-    
-
-    
     //MARK: - Change City Delegate methods
     /***************************************************************/
     
     
     //Write the userEnteredANewCityName Delegate method here:
     func userEnteredANewCityName(city: String) {
-        print(city)
+        let params : [String : String] = ["q" : city, "appid" : APP_ID]
+        
+        getWeatherData(url: WEATHER_URL, parameters: params)
     }
-
+    
     
     //Write the PrepareForSegue Method here
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
@@ -171,11 +169,9 @@ class WeatherViewController: UIViewController, CLLocationManagerDelegate, Change
             let destinationVC = segue.destination as! ChangeCityViewController
             
             destinationVC.delegate = self
+        }
+        
     }
-    
-    
-    
-    
 }
 
 

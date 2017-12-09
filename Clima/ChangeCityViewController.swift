@@ -33,7 +33,7 @@ class ChangeCityViewController: UIViewController {
         let cityName = changeCityTextField.text!
         
         //2 If we have a delegate set, call the method userEnteredANewCityName
-        delegate?.userEnteredANewCityName(city: cityName)
+        delegate?.userEnteredANewCityName(city: cityName)  //making use of optional chaining (will execute if not nil otherwise will skip it)
         
         //3 dismiss the Change City View Controller to go back to the WeatherViewController
         self.dismiss(animated: true, completion: nil)
