@@ -27,6 +27,14 @@ class WeatherViewController: UIViewController, CLLocationManagerDelegate, Change
     @IBOutlet weak var weatherIcon: UIImageView!
     @IBOutlet weak var cityLabel: UILabel!
     @IBOutlet weak var temperatureLabel: UILabel!
+    @IBOutlet weak var faren: UISwitch!
+    
+    @IBAction func SwitchOn(_ sender: UISwitch) {
+        if sender.isOn{
+            
+        }
+    }
+    
     
     
     override func viewDidLoad() {
